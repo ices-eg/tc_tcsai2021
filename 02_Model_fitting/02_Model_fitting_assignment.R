@@ -5,13 +5,26 @@
 # This script shows the steps followed to fit a stock-recruitment model to
 # in the file 'north_sea_herring_SR.csv'
 
+# ==============================================================================
+# First a short deviation!
+# ==============================================================================
+
+#install.packages("icesVocab")
+library(icesVocab)
+?icesVocab
+
+findCode("species", "herring", full = TRUE, regex = TRUE)
+
+findCode("stock", "herring", full = TRUE, regex = TRUE)
+
+getCodeDetail("ICES_StockCode", "her.27.3a47d")
 
 #==============================================================================
 # Load and explore data
 #==============================================================================
 
 # load data from comma-separated file to data.frame
-herring <- read.csv(file = 'north_sea_herring_SR.csv', header = TRUE)
+herring <- read.csv(file = "02_Model_fitting/north_sea_herring_SR.csv", header = TRUE)
 
 # take a look at what we have
 head(herring) # this looks at the first 6 rows
@@ -439,3 +452,42 @@ matplot(Spred, Rpred[, sample(1:ncol(Rpred), 100)], type = "l", lty = 1, col = g
         main = "boostraped error in stock recruitment relationship")
 # add the data
 points(herring$ssb, herring$rec, type = "b", pch = 16, col = "red")
+
+
+
+
+
+
+
+
+
+
+
+# ==============================================================================
+# A note on GLMs for SR modeling
+# ==============================================================================
+
+# for plotting lets order the SR data
+herring_ord <- herring[order(herring$ssb),]
+
+# log transformed ricker
+# R = a S exp(-bS)
+# =>  log R = log(a) -bS + log(S)
+
+ricker_fit <- glm(rec ~ ssb, offset = log(ssb), data = herring_ord, family = Gamma(log))
+plot(herring_ord$ssb, herring_ord$rec)
+lines(herring_ord$ssb, fitted(ricker_fit), col = "red", lwd = 2)
+
+# inverse transformed beverton holt
+# R = a S / (b + S)
+# =>  1 / R = (b + S) / (aS)
+# =>        = b / (aS) + S / (aS)
+# =>        = b/a * 1/S + 1 / a
+
+bh_fit <- glm(rec ~ I(1 / ssb), data = herring_ord, family = Gamma(inverse))
+plot(herring_ord$ssb, herring_ord$rec)
+lines(herring_ord$ssb, fitted(bh_fit), col = "red", lwd = 2)
+
+# this can be useful if you want to quickly check for covariates etc.
+# but if you are going to use this in a stock assessmet model you will
+# have to go down the route of using optim or a similar optimiser anyway
