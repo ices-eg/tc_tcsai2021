@@ -470,6 +470,22 @@ points(herring$ssb, herring$rec, type = "b", pch = 16, col = "red")
 # for plotting lets order the SR data
 herring_ord <- herring[order(herring$ssb),]
 
+# mean
+mean_fit <- glm(rec ~ 1, data = herring_ord)
+plot(herring_ord$ssb, herring_ord$rec)
+lines(herring_ord$ssb, fitted(mean_fit), col = "red", lwd = 2)
+
+# linear 1
+linear1_fit <- glm(rec ~ ssb - 1, data = herring_ord)
+plot(herring_ord$ssb, herring_ord$rec)
+lines(herring_ord$ssb, fitted(linear1_fit), col = "red", lwd = 2)
+
+# linear 2
+linear2_fit <- glm(rec ~ ssb, data = herring_ord)
+plot(herring_ord$ssb, herring_ord$rec)
+lines(herring_ord$ssb, fitted(linear2_fit), col = "red", lwd = 2)
+
+
 # log transformed ricker
 # R = a S exp(-bS)
 # =>  log R = log(a) -bS + log(S)
@@ -487,6 +503,19 @@ lines(herring_ord$ssb, fitted(ricker_fit), col = "red", lwd = 2)
 bh_fit <- glm(rec ~ I(1 / ssb), data = herring_ord, family = Gamma(inverse))
 plot(herring_ord$ssb, herring_ord$rec)
 lines(herring_ord$ssb, fitted(bh_fit), col = "red", lwd = 2)
+
+
+
+# all of 'em
+plot(herring_ord$ssb, herring_ord$rec)
+lines(herring_ord$ssb, fitted(mean_fit), col = "red", lwd = 2)
+lines(herring_ord$ssb, fitted(linear1_fit), col = "blue", lwd = 2)
+lines(herring_ord$ssb, fitted(linear2_fit), col = "lightblue", lwd = 2)
+lines(herring_ord$ssb, fitted(ricker_fit), col = "seagreen", lwd = 2)
+lines(herring_ord$ssb, fitted(bh_fit), col = "orange", lwd = 2)
+
+
+# I can add code for confidence intervals if that would be helpful?
 
 # this can be useful if you want to quickly check for covariates etc.
 # but if you are going to use this in a stock assessmet model you will
