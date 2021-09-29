@@ -151,6 +151,8 @@ ssq_optim <- function(par) {
   ssq(a, b)
 }
 
+ssq_optim( c(1, 1) )
+
 # use c to combine the starting values into a vector
 ?c
 par0 <- c(1, 1)
@@ -472,16 +474,19 @@ herring_ord <- herring[order(herring$ssb),]
 
 # mean
 mean_fit <- glm(rec ~ 1, data = herring_ord)
+
 plot(herring_ord$ssb, herring_ord$rec)
 lines(herring_ord$ssb, fitted(mean_fit), col = "red", lwd = 2)
 
 # linear 1
 linear1_fit <- glm(rec ~ ssb - 1, data = herring_ord)
+
 plot(herring_ord$ssb, herring_ord$rec)
 lines(herring_ord$ssb, fitted(linear1_fit), col = "red", lwd = 2)
 
 # linear 2
 linear2_fit <- glm(rec ~ ssb, data = herring_ord)
+
 plot(herring_ord$ssb, herring_ord$rec)
 lines(herring_ord$ssb, fitted(linear2_fit), col = "red", lwd = 2)
 
@@ -491,6 +496,7 @@ lines(herring_ord$ssb, fitted(linear2_fit), col = "red", lwd = 2)
 # =>  log R = log(a) -bS + log(S)
 
 ricker_fit <- glm(rec ~ ssb, offset = log(ssb), data = herring_ord, family = Gamma(log))
+
 plot(herring_ord$ssb, herring_ord$rec)
 lines(herring_ord$ssb, fitted(ricker_fit), col = "red", lwd = 2)
 
@@ -501,6 +507,7 @@ lines(herring_ord$ssb, fitted(ricker_fit), col = "red", lwd = 2)
 # =>        = b/a * 1/S + 1 / a
 
 bh_fit <- glm(rec ~ I(1 / ssb), data = herring_ord, family = Gamma(inverse))
+
 plot(herring_ord$ssb, herring_ord$rec)
 lines(herring_ord$ssb, fitted(bh_fit), col = "red", lwd = 2)
 
