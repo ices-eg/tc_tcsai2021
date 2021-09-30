@@ -8,16 +8,18 @@ AgeModel <- function(Ninit, M, Fmort, mat, w, Amax, Tmax, alpha, beta, v)
 
   ## Year 1
   N[1,1] <- Ninit
-  for(a in 1:(Amax-1))
-    N[a+1,1] <- N[a,1] * exp(-M[a]-Fmort[a])
+  for (a in 1:(Amax - 1)) {
+    N[a + 1, 1] <- N[a, 1] * exp(-M[a] - Fmort[a])
+  }
   SSB[1] <- sum(N[,1] * mat * w)
 
   ## Later years
   for(t in 1:(Tmax-1))
   {
     N[1,t+1] <- (alpha*SSB[t]) / (beta+SSB[t]) + v*runif(1,-0.5,0.5)
-    for(a in 1:(Amax-1))
-      N[a+1,t+1] <- N[a,t] * exp(-M[a]-Fmort[a])
+    for (a in 1:(Amax - 1)) {
+      N[a + 1, t + 1] <- N[a, t] * exp(-M[a] - Fmort[a])
+    }
     SSB[t+1] <- sum(N[,t+1] * mat * w)
   }
 
@@ -37,16 +39,25 @@ RecPlot <- function(SR, Slim=NULL, Rlim=NULL)
   Rec.curve <- (alpha*SSB.curve) / (beta+SSB.curve)
 
   opar <- par(mfrow=c(2,1), oma=c(0,0,0,3))
-  plot(SR$SSB, ylim=Slim, type="l", lwd=2, col="blue",
-       xlab="Year", ylab="SSB (t)")
+  plot(
+    SR$SSB,
+    ylim = Slim, type = "l", lwd = 2, col = "blue",
+    xlab = "Year", ylab = "SSB (t)"
+  )
   par(new=TRUE)
-  plot(SR$Rec, ylim=Rlim, type="h", lwd=2, col="red",
-       ann=FALSE, axes=FALSE)
+  plot(
+    SR$Rec,
+    ylim = Rlim, type = "h", lwd = 2, col = "red",
+    ann = FALSE, axes = FALSE
+  )
   axis(4)
   mtext("Recruitment at age 1 (1000s)", side=4, line=3)
 
-  plot(SSB.curve, Rec.curve, xlim=Slim, ylim=Rlim, type="l",
-       xlab="SSB (t)", ylab="Recruitment at age 1 (1000s)", lwd=2, col="red")
+  plot(
+    SSB.curve, Rec.curve,
+    xlim = Slim, ylim = Rlim, type = "l",
+    xlab = "SSB (t)", ylab = "Recruitment at age 1 (1000s)", lwd = 2, col = "red"
+  )
   points(SR$SSB, SR$Rec, type="o", pch=16, col="blue")
   par(opar)
 }
@@ -67,5 +78,7 @@ beta <- 1000
 pop <- AgeModel(Ninit, M, Fmort, mat, w, Amax, Tmax, alpha, beta, v=1000)
 round(pop$N)
 
-RecPlot(AgeModel(Ninit, M, Fmort, mat, w, Amax, Tmax, alpha, beta, v=1000),
-        Slim=c(0,20000), Rlim=c(0,2000))
+RecPlot(
+  AgeModel(Ninit, M, Fmort, mat, w, Amax, Tmax, alpha, beta, v = 1000),
+  Slim = c(0, 20000), Rlim = c(0, 2000)
+)

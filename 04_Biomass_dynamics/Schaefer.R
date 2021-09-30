@@ -16,7 +16,7 @@ Schaefer <- function(par, data, verbose=FALSE)
   }
   Ifit <- q * B
 
-  res <- log(I) - log(Ifit)
+  res <- log(I) - log(Ifit) # log(I / Ifit)
   RSS <- sum(res^2)
 
   pars <- c(r=r, K=K, Binit=Binit, q=q)
@@ -51,13 +51,15 @@ plot_shaefer <- function(fit, data, main) {
 ################################################################################
 ## South Atlantic albacore
 
-albacore <- read.table("albacore.dat", header=TRUE)
+albacore <- read.table("04_Biomass_dynamics/albacore.dat", header=TRUE)
 init <- c(logr=log(0.5), logK=log(200), logBinit=log(100), logq=log(0.5))
 
 Schaefer(par=init, albacore)
 optim(init, Schaefer, data=albacore)
 est <- optim(init, Schaefer, data=albacore)$par
 fit <- Schaefer(est, albacore, verbose=TRUE)
+
+plot_shaefer(fit, albacore, main = "Albacore: Fit to data")
 
 par(mfrow=c(2,2))
 
