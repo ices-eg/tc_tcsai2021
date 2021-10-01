@@ -2,8 +2,17 @@ source("sca_function.R")
 
 ## Read data
 
-C <- as.matrix(read.table("nscod_catage.dat", header = TRUE,
-                          check.names = FALSE, row.names = 1))
+library(dplyr)
+
+C <-
+  read.table("nscod_catage.dat",
+    header = TRUE,
+    check.names = FALSE, row.names = 1
+  ) %>%
+  tibble()
+
+
+
 I <- as.matrix(read.table("nscod_survey.dat", header = TRUE,
                           check.names = FALSE, row.names = 1))
 M <- as.matrix(read.table("nscod_natmort.dat", header = TRUE,
@@ -60,7 +69,10 @@ sapply(opts,
 ## final run
 
 run <- optim(par = par, fn = sca, data = data, method = "BFGS",
-             control = list(maxit = 1000))
+             control = list(maxit = 1000), hessian = TRUE)
+
+
+run
 
 # evaluate the model at the optimised parameter values
 predictions <- sca(run$par, data, full = TRUE)

@@ -94,14 +94,15 @@ sca <- function(par, data, full=FALSE)
   Ni <- N[rownames(N) %in% rownames(I), colnames(N) %in% colnames(I)]
   Ihat <- sweep(Ni, 2, exp(logQ), "*")
 
-  ## Evaluate likelihood
+  ## Evaluate ssq
   Cres <- log(C) - log(Chat)
   Ires <- log(I) - log(Ihat)
-  neglogL <- function(res)
+  ssq <- function(res)
   {
-    -sum(dnorm(res, sd=sqrt(mean(res^2)), log=TRUE))
+    #-sum(dnorm(res, sd = sqrt(mean(res^2)), log = TRUE))
+    sum(res^2)
   }
-  f <- c(catch=neglogL(Cres), survey=neglogL(Ires))
+  f <- c(catch=ssq(Cres), survey=ssq(Ires))
 
   ## Prepare output
   if(full)

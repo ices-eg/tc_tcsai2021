@@ -58,10 +58,11 @@ Ni <- N[rownames(N) %in% rownames(I), colnames(N) %in% colnames(I)]
 Ihat <- sweep(Ni, 2, exp(logQ), "*")
 Ires <- log(I) - log(Ihat)
 
-## Evaluate likelihood
-neglogL <- function(res)
+## Evaluate SSQ
+ssq <- function(res)
 {
-  -sum(dnorm(res, sd=sqrt(mean(res^2)), log=TRUE))
+  #-sum(dnorm(res, sd=sqrt(mean(res^2)), log=TRUE))
+  sum(res^2)
 }
 
-c(catch=neglogL(Cres), survey=neglogL(Ires))
+c(catch = ssq(Cres), survey = ssq(Ires))
